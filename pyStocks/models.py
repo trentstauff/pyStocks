@@ -1,6 +1,6 @@
 from datetime import datetime
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from pyStocks import db, login_manager, app
+from pyStocks.__init__ import db, login_manager, app
 from flask_login import UserMixin
 
 
@@ -15,6 +15,10 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
+    money = db.Column(db.Integer, nullable=False)
+    total = db.Column(db.String(60))
+    profit = db.Column(db.String(60))
+    stocks = db.relationship('UserStocks', backref='owner', lazy=True)
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
@@ -31,3 +35,18 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class UserStocks(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    symbol = db.Column(db.String(255))
+    shares = db.Column(db.String(255))
+    purchase_price = db.Column(db.String(255))
+    price = db.Column(db.String(255))
+    total_value = db.Column(db.String(255))
+    margin = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f"UserStocks('{self.symbol}', '{self.shares}, {self.timestamp}', '{self.user_id}')"
