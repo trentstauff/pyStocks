@@ -1,3 +1,4 @@
+
 from flask import render_template, url_for, flash, redirect, request
 from pyStocks.__init__ import app, db, bcrypt
 from pyStocks.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
@@ -15,7 +16,7 @@ APIKEY = os.environ.get('API_KEY_1')
 @login_required
 @app.route("/pyStocks/home")
 def home():
-
+ 
     user = current_user;
     stocks = UserStocks.query.filter_by(owner=user).order_by(UserStocks.symbol).all()
     user.stocks = stocks
@@ -286,11 +287,13 @@ def reset_token(token):
     # this returns the user id
     user = User.verify_reset_token(token)
 
+
     if user is None:
         flash("That token isn't valid, or has expired.", 'warning')
         return redirect(url_for('reset_request'))
 
     form = ResetPasswordForm()
+
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -298,5 +301,6 @@ def reset_token(token):
         db.session.commit()
         flash('Your password has been changed. You are now able to log in.', 'success')
         return redirect(url_for('login'))
+
 
     return render_template('reset_token.html', title='Reset Password', form=form)
