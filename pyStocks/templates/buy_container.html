@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="/static/awesomplete/awesomplete.css" />
+<script src="/static/awesomplete/awesomplete.js" async></script>
+
+<form method="post" action="/pyStocks/buy">
+  <div class="form-group">
+    <input class="form-control" type="text" name="symbol"
+    id="buySymbol" placeholder="Stock" list="buyList" />
+    <datalist id="buyList">
+      {% for stock in stocks %}
+      <option selected value="{{stock['symbol']}}">
+        {{stock['name']}}
+      </option>
+      {% endfor %}
+    </datalist>
+  </div>
+  <div class="form-group">
+    <input autocomplete="off" class="form-control" type="number"
+    id="buyShares" placeholder="Shares" name="shares" />
+  </div>
+  <button class="btn btn-primary" type="submit">Buy Stocks</button>
+</form>
