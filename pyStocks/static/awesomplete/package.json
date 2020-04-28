@@ -1,0 +1,63 @@
+{
+  "_from": "awesomplete",
+  "_id": "awesomplete@1.1.5",
+  "_inBundle": false,
+  "_integrity": "sha512-UFw1mPW8NaSECDSTC36HbAOTpF9JK2wBUJcNn4MSvlNtK7SZ9N72gB+ajHtA6D1abYXRcszZnBA4nHBwvFwzHw==",
+  "_location": "/awesomplete",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "awesomplete",
+    "name": "awesomplete",
+    "escapedName": "awesomplete",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/awesomplete/-/awesomplete-1.1.5.tgz",
+  "_shasum": "1b2b5dd106d3955595619c03da472a1dc0faf0af",
+  "_spec": "awesomplete",
+  "_where": "C:\\Users\\Craftcrossing\\Desktop\\pyStocks",
+  "author": {
+    "name": "Lea Verou"
+  },
+  "bugs": {
+    "url": "https://github.com/LeaVerou/awesomplete/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "http://leaverou.github.io/awesomplete/",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-header": "^1.7.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.19",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-coverage": "^0.5.3",
+    "karma-fixture": "^0.2.5",
+    "karma-html2js-preprocessor": "^0.1.0",
+    "karma-jasmine": "^0.3.6",
+    "karma-jasmine-def": "^0.1.0"
+  },
+  "homepage": "https://leaverou.github.io/awesomplete/",
+  "license": "MIT",
+  "main": "awesomplete.js",
+  "name": "awesomplete",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeaVerou/awesomplete.git"
+  },
+  "scripts": {
+    "test": "karma start --single-run"
+  },
+  "version": "1.1.5"
+}

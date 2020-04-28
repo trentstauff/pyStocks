@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from pyStocks.models import User
 
 
@@ -14,7 +14,8 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
-    money = StringField('Starting Balance', validators=[DataRequired()])
+    money = IntegerField('Starting Balance (example: 10000, not $10,000)', validators=[NumberRange(min=0, max=500000000, message='(Starting balance must be less than $500,000,000.)')])
+
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
@@ -41,7 +42,10 @@ class UpdateAccountForm(FlaskForm):
                            validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
-    money = IntegerField('Balance')
+
+    money = IntegerField('Balance', validators=[
+        NumberRange(min=0, max=1000000000, message='(Balance must be less than $1,000,000,000. Enter without $ sign or commas.)')])
+
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
 

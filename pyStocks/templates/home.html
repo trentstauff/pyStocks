@@ -5,6 +5,54 @@
 {% endblock %}
 
 {% block content %}
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+    <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com" rel="noopener" target="_blank"></a></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "proName": "FOREXCOM:NSXUSD",
+      "title": "Nasdaq 100"
+    },
+    {
+      "description": "DOW",
+      "proName": "CURRENCYCOM:US30"
+    },
+    {
+      "description": "TSX",
+      "proName": "TSX:TSX"
+    },
+    {
+      "description": "USD/CAD",
+      "proName": "FX:USDCAD"
+    },
+    {
+      "description": "USD/EURO",
+      "proName": "FX_IDC:USDEUR"
+    },
+    {
+      "description": "BTC/USD",
+      "proName": "BITBAY:BTCUSD"
+    },
+    {
+      "description": "ETH/USD",
+      "proName": "KRAKEN:ETHUSD"
+    }
+  ],
+  "colorTheme": "light",
+  "isTransparent": true,
+  "displayMode": "regular",
+  "locale": "en"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
     <h1>Your Portfolio</h1>
     <div class="table-responsive table-hover">
 
@@ -26,9 +74,25 @@
                     <td>{{ stock.symbol }}</td>
                     <td>{{ stock.shares }}</td>
                     <td>${{ stock.purchase_price }}</td>
-                    <td>${{ stock.price }}</td>
+                    {% if stock.price|float < stock.purchase_price|float %}
+                        <td class="text-danger">${{ stock.price }}</td>
+                    {% endif %}
+                    {% if stock.price|float > stock.purchase_price|float %}
+                        <td class="text-success">${{ stock.price }}</td>
+                    {% endif %}
+                    {% if stock.price|float == stock.purchase_price|float %}
+                        <td>${{ stock.price }}</td>
+                    {% endif %}
                     <td>${{ stock.total_value }}</td>
-                    <td>${{ stock.margin }}</td>
+                    {% if stock.margin|float < 0 %}
+                        <td class="text-danger">${{ stock.margin }}</td>
+                    {% endif %}
+                    {% if stock.margin|float > 0 %}
+                        <td class="text-success">${{ stock.margin }}</td>
+                    {% endif %}
+                    {% if stock.margin|float == 0 %}
+                        <td>${{ stock.margin }}</td>
+                    {% endif %}
                     <td>
                         <button type="button" class="btn btn-info btn-sm"><a href="{{url_for('buy', stock_id=stock.id)}}" style="color: #ffffff; text-decoration: none;">Buy</a></button>
                         <button type="button" class="btn btn-danger btn-sm"><a href="{{url_for('sell', stock_id=stock.id)}}" style="color: #ffffff; text-decoration: none;">Sell</a></button>
@@ -36,6 +100,22 @@
                 </tr>
                 {% endfor %}
                  <tr>
+                     <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th>Total +/-</th>
+                    {% if user.profit|float > 0 %}
+                        <td class="text-success">${{ user.profit }}</td>
+                    {% endif %}
+                    {% if user.profit|float < 0 %}
+                        <td class="text-danger">${{ user.profit }}</td>
+                    {% endif %}
+                    {% if user.profit|float == 0 %}
+                        <td >${{ user.profit }}</td>
+                    {% endif %}
+                </tr>
+                <tr>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -44,18 +124,18 @@
                     <td>${{user.total}}</td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <th>Your Balance</th>
-                    <td>${{ user.money }}</td>
-                    <td>
-                        <form method="post" action="/refresh" >
-                          <button class="btn btn-sm btn-primary" type="submit">Refresh Prices</button>
-                        </form>
-                    </td>
-                </tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <th>Balance</th>
+                        <td>${{user.money}}</td>
+                        <td>
+                            <form method="post" action="{{url_for('refresh')}}" >
+                              <button class="btn btn-sm btn-primary" type="submit">Refresh Prices</button>
+                            </form>
+                        </td>
+                    </tr>
             </tbody>
         </table>
     </div>
@@ -96,4 +176,5 @@
           </div>
         </div>
       </div>
+
 {% endblock %}
