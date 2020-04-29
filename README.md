@@ -10,4 +10,6 @@ using [finnhub.io](https://finnhub.io/), an amazing free API.
 As you can see, if your margin's are in the positive, they'll be displayed in green!
 But watch out, the market moves fast and so does the value of stocks.
 
+![pyStocksPositive.png](http://trentstauffer.ca/img/pyStocksPositive.png)
+
 It's [currently up and running on my webserver.](https://trentstauffer.ca/pyStocks) If you're ready, head on over and try to stay in the green today!
