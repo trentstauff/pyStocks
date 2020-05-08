@@ -1,4 +1,4 @@
-
+import os
 from flask import render_template, url_for, flash, redirect, request
 from pyStocks.__init__ import app, db, bcrypt
 from pyStocks.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
@@ -7,17 +7,17 @@ from pyStocks.models import User, UserStocks
 from flask_login import login_user, current_user, logout_user, login_required
 from pyStocks.stocks import stocks as stock_list
 import pyStocks.helpers as helpers
-import os
 
 global APIKEY
 APIKEY = os.environ.get('API_KEY_1')
+
 
 # the home route is where the user's portfolio is displayed
 @login_required
 @app.route("/pyStocks/home")
 def home():
  
-    user = current_user;
+    user = current_user
     stocks = UserStocks.query.filter_by(owner=user).order_by(UserStocks.symbol).all()
     user.stocks = stocks
     helpers.check_day()
@@ -42,7 +42,8 @@ def register():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password, money=form.money.data)
+        rounded_money = round(form.money.data, 2)
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password, money=rounded_money)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in.', 'success')
@@ -94,7 +95,7 @@ def account():
             current_user.image_file = picture_file
 
         if form.money.data:
-            current_user.money = form.money.data
+            current_user.money = round(form.money.data,2)
 
         current_user.username = form.username.data
         current_user.email = form.email.data
@@ -115,6 +116,14 @@ def account():
                            image_file=image_file, form=form)
 
 
+@app.route("/pyStocks/leaderboard")
+def leaderboard():
+    user = current_user
+    users = User.query.filter(User.profit != None).order_by(User.profit.desc()).all()
+
+    return render_template('leaderboard.html', user=user, users=users)
+
+
 # this route deals with buying stocks. Either from /buy, or from the form on the users portfolio
 @app.route('/pyStocks/buy', methods=['GET', 'POST'])
 @app.route('/pyStocks/buy/<string:stock_id>', methods=['GET', 'POST'])
@@ -132,7 +141,7 @@ def buy(stock_id=None):
     # this deals with the form to buy stocks, so no id is passed
     if request.method == 'POST':
         passed_symbol = request.form.get('symbol')
-        passed_shares = request.form.get('shares')
+        passed_shares = int(request.form.get('shares'))
 
         status = helpers.check_input(passed_symbol, passed_shares)
 
@@ -177,7 +186,7 @@ def sell(stock_id=None):
 
     if request.method == 'POST':
         passed_symbol = request.form.get('symbol')
-        passed_shares = request.form.get('shares')
+        passed_shares = int(request.form.get('shares'))
 
         status = helpers.check_input(passed_symbol, passed_shares)
 
