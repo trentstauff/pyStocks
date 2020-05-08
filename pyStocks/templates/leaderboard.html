@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="table-responsive table-hover">
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>Username</th>
+                    <th></th>
+                    <th>Profit</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <h3>Profit Leaderboard</h3>
+            <tbody>
+                    {% for user in users %}
+                        <tr>
+                        {% if loop.index == 1 %}
+                            <td bgcolor="#ffd700"></td>
+                            <td bgcolor="#ffd700"></td>
+                            <td bgcolor="#ffd700"></td>
+                            <td bgcolor="#ffd700">{{loop.index}}. </td>
+                            <td bgcolor="#ffd700">{{user.username}}</td>
+                            <td bgcolor="#ffd700"></td>
+                            {% if user.profit > 0 %}
+                            <td bgcolor="#ffd700" class="text-success">${{user.profit}}</td>
+                            {% endif %}
+                            {% if user.profit < 0 %}
+                            <td bgcolor="#ffd700" class="text-danger">${{user.profit}}</td>
+                            {% endif %}
+                            {% if user.profit == 0 %}
+                            <td bgcolor="#ffd700">${{user.profit}}</td>
+                            {% endif %}
+                            <td bgcolor="#ffd700"></td>
+                        {% elif loop.index == 2 %}
+                            <td bgcolor="#d3d3d3"></td>
+                            <td bgcolor="#d3d3d3"></td>
+                            <td bgcolor="#d3d3d3"></td>
+                            <td bgcolor="#d3d3d3">{{loop.index}}.</td>
+                            <td bgcolor="#d3d3d3">{{user.username}}</td>
+                            <td bgcolor="#d3d3d3"></td>
+                            {% if user.profit > 0 %}
+                            <td bgcolor="#d3d3d3" class="text-success">${{user.profit}}</td>
+                            {% endif %}
+                            {% if user.profit < 0 %}
+                            <td bgcolor="#d3d3d3" class="text-danger">${{user.profit}}</td>
+                            {% endif %}
+                            {% if user.profit == 0 %}
+                            <td bgcolor="#d3d3d3">${{user.profit}}</td>
+                            {% endif %}
+                            <td bgcolor="#d3d3d3"></td>
+                        {% elif loop.index == 3 %}
+                            <td bgcolor="#ff7f50"></td>
+                            <td bgcolor="#ff7f50"></td>
+                            <td bgcolor="#ff7f50"></td>
+                            <td bgcolor="#ff7f50">{{loop.index}}. </td>
+                            <td bgcolor="#ff7f50">{{user.username}}</td>
+                            <td bgcolor="#ff7f50"></td>
+                            {% if user.profit > 0 %}
+                            <td bgcolor="#ff7f50" class="text-success">${{user.profit}}</td>
+                            {% endif %}
+                            {% if user.profit < 0 %}
+                            <td bgcolor="#ff7f50" class="text-danger">${{user.profit}}</td>
+                            {% endif %}
+                            {% if user.profit == 0 %}
+                            <td bgcolor="#ff7f50">${{user.profit}}</td>
+                            {% endif %}
+                            <td bgcolor="#ff7f50"></td>
+                        {% else %}
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{loop.index}}. </td>
+                            <td>{{user.username}}</td>
+                            <td></td>
+                            {% if user.profit > 0 %}
+                            <td class="text-success">${{user.profit}}</td>
+                            {% endif %}
+                            {% if user.profit < 0 %}
+                            <td class="text-danger">${{user.profit}}</td>
+                            {% endif %}
+                            {% if user.profit == 0 %}
+                            <td >${{user.profit}}</td>
+                            {% endif %}
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+{% endblock content %}

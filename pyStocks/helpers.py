@@ -9,7 +9,6 @@ from flask_login import current_user
 from flask_mail import Message
 import pyStocks.helpers as helpers
 import datetime
-from decimal import Decimal
 
 global APIKEY
 APIKEY = os.environ.get('API_KEY_1')
@@ -35,12 +34,12 @@ def purchase_stock(symbol, shares, user):
     stock_to_change = None
 
     for itr in owns_stock:
-        if float(itr.purchase_price) == current_price:
+        if itr.purchase_price == current_price:
             stock_to_change = itr
 
     if owns_stock is None or stock_to_change is None:
 
-        total_price = float(round(Decimal(current_price * float(shares)), 2))
+        total_price = round(current_price * shares, 2)
 
         if current_user.money < total_price:
             flash(
@@ -48,11 +47,11 @@ def purchase_stock(symbol, shares, user):
                     total_price) + '.', 'danger')
             return redirect(url_for('buy'))
 
-        current_user.money = round(float(Decimal(current_user.money - total_price)), 2)
+        current_user.money = round(current_user.money - total_price, 2)
 
         db.session.commit()
 
-        current_price = str(round(Decimal(current_price), 2))
+        current_price = str(round(current_price, 2))
 
         stock = UserStocks(shares=shares, symbol=symbol, timestamp=datetime.datetime.now(),
                            price=current_price, purchase_price=current_price, total_value=total_price,
@@ -61,26 +60,26 @@ def purchase_stock(symbol, shares, user):
         db.session.add(stock)
 
     else:
-        amount_purchased = int(shares)
-        stock_to_change.shares = str(int(stock_to_change.shares) + amount_purchased)
-        stock_to_change.total_value = str(round((float(stock_to_change.shares) * float(stock_to_change.price)), 2))
-        total_price = float(round(Decimal(current_price * float(shares)), 2))
+        amount_purchased = shares
+        stock_to_change.shares = stock_to_change.shares + amount_purchased
+        stock_to_change.total_value = round(stock_to_change.shares * stock_to_change.price, 2)
+        total_price = (round(current_price * shares, 2))
 
-        if float(current_user.money) < float(total_price):
+        if current_user.money < total_price:
             flash(
                 'Not enough money! ' + str(symbol) + ' is going for $' + str(current_price) + '/share. Your cost was $' + str(
                     total_price) + ', and you only have $' + str(user.money) + '.', 'danger')
             return redirect(url_for('buy'))
 
-        current_user.money = round(float(Decimal(current_user.money - total_price)), 2)
+        current_user.money = round(current_user.money - total_price, 2)
 
     db.session.commit()
     refresh()
 
-    if int(shares) == 1:
+    if shares == 1:
         flash('Stock purchased: ' + symbol + ' for $' + str(round(total_price, 2)) + '.', 'success')
     else:
-        flash('Stocks purchased: ' + symbol + ' x ' + shares + ' for $' + str(round(total_price, 2)) + '.', 'success')
+        flash('Stocks purchased: ' + symbol + ' x ' + str(shares) + ' for $' + str(round(total_price, 2)) + '.', 'success')
     return True
 
 
@@ -96,12 +95,12 @@ def sell_stock(symbol, shares, user, stock_id=None):
         stocklist = UserStocks.query.filter_by(symbol=symbol, owner=user).all()
 
         for stock in stocklist:
-            owns_amount += int(stock.shares)
+            owns_amount += stock.shares
 
-        if stocklist is None or float(owns_amount) == 0:
+        if stocklist is None or owns_amount == 0:
             flash('You do not own this stock.', 'warning')
             return redirect(url_for('sell'))
-        elif float(owns_amount) < float(shares):
+        elif owns_amount < shares:
             flash('You only own ' + str(owns_amount) + ' of ' + symbol + '.', 'warning')
             return redirect(url_for('sell'))
 
@@ -110,14 +109,14 @@ def sell_stock(symbol, shares, user, stock_id=None):
         total_price = 0
         amount_sold = 0
 
-        while i < int(shares):
+        while i < shares:
             for stock in stocklist:
-                while int(amount_sold) < int(shares):
-                    sell_money += float(stock.price)
-                    stock.shares = str(int(stock.shares) - 1)
+                while amount_sold < shares:
+                    sell_money += stock.price
+                    stock.shares = stock.shares - 1
                     amount_sold += 1
                     i = i + 1
-                    if float(stock.shares) == 0:
+                    if stock.shares == 0:
                         db.session.delete(stock)
                         break
             if amount_sold == shares:
@@ -125,7 +124,7 @@ def sell_stock(symbol, shares, user, stock_id=None):
 
         total_price = sell_money
         user.money += sell_money
-        user.money = float(round(Decimal(user.money), 2))
+        user.money = round(user.money, 2)
         db.session.commit()
 
     else:
@@ -133,19 +132,19 @@ def sell_stock(symbol, shares, user, stock_id=None):
         stock = UserStocks.query.filter_by(id=stock_id).first()
         owns_amount = stock.shares
 
-        if stock is None or float(owns_amount) == 0:
+        if stock is None or owns_amount == 0:
             flash('You do not own this stock.', 'warning')
             return redirect(url_for('sell'))
-        elif float(owns_amount) < float(shares):
+        elif owns_amount < shares:
             flash('You only own ' + str(owns_amount) + ' of ' + symbol + '.', 'warning')
             return redirect(url_for('sell'))
 
-        total_price = float(stock.price) * float(shares)
+        total_price = stock.price * shares
 
-        updated_balance = Decimal(current_user.money + total_price)
-        current_user.money = float(round(updated_balance, 2))
+        updated_balance = current_user.money + total_price
+        current_user.money = round(updated_balance, 2)
 
-        stock.shares = int(owns_amount) - int(shares)
+        stock.shares = owns_amount - shares
 
         if stock.shares == 0:
             db.session.delete(stock)
@@ -170,7 +169,7 @@ def quote_stock(symbol):
     data = requests.get('https://finnhub.io/api/v1/quote?symbol=' + symbol + '&token=' + APIKEY)
     to_json = data.json()
     current_price = to_json['c']
-    flash(symbol + ' is going for $' + str(current_price) + '/share.', 'info')
+    flash(symbol + ' is going for $' + str(round(current_price,2)) + '/share.', 'info')
 
     return True
 
@@ -186,15 +185,15 @@ def refresh():
         data = requests.get('https://finnhub.io/api/v1/quote?symbol=' + symbol + '&token='+ APIKEY)
         to_json = data.json()
         current_price = to_json['c']
-        stock.margin = str(round((current_price * float(stock.shares)) - (float(stock.purchase_price) * float(stock.shares)),2))
+        stock.margin = round((current_price *stock.shares) - (stock.purchase_price * stock.shares),2)
         stock.price = round(current_price, 2)
-        networth += round(Decimal(float(stock.total_value)), 2)
-        profit += float(stock.margin)
-        stock.total_value = str(round(Decimal(float(current_price) * float(stock.shares)),2))
+        networth += round(stock.total_value, 2)
+        profit += stock.margin
+        stock.total_value = round(current_price * stock.shares,2)
         db.session.commit()
 
-    user.total = str(networth)
-    user.profit = str(round(Decimal(profit), 2))
+    user.total = round(networth, 2)
+    user.profit = round(profit, 2)
     db.session.commit()
 
     return redirect(url_for('home'))
@@ -214,7 +213,7 @@ def check_input(symbol, shares=None):
         flash('Please give a proper value of Shares.', 'warning')
         return False
 
-    if shares is not None and float(shares) < 0:
+    if shares is not None and shares < 0:
         flash('Please give a positive value for Shares.', 'warning')
         return False
 
@@ -275,7 +274,7 @@ def save_picture(form_picture):
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-
+    print(picture_path)
     output_size = (125, 125)
     i = Image.open(form_picture)
     i.thumbnail(output_size)
