@@ -13,7 +13,6 @@ But watch out, the market moves fast and so does the value of stocks.
 Interesting Features:
 - Password hashing
 - reCaptcha protection against bot attacks
-- SSL certified 
 - Realtime data
 - Leaderboards to compete against others
 - and much more!
