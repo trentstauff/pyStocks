@@ -4,7 +4,7 @@ pyStocks is a stock portfolio site that you can use to practice your skills in t
 
 ![pyStocks gif](https://trentstauffer.ca/img/pyGithub.gif)
 
-pyStocks is made in python and uses Flask, and works by gathering real-time data surrounding the stock market 
+pyStocks is made in python and utilizes Flask, alongside gathering real-time data surrounding the stock market 
 using [finnhub.io](https://finnhub.io/), an amazing free API.
 
 As you can see, if your margin's are in the positive, they'll be displayed in green!
